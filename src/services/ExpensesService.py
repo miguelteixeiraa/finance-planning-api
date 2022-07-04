@@ -1,5 +1,5 @@
 from db.MainStorageProvider import MainStorageProvider
-from typing import Dict
+from typing import Dict, List
 
 
 class ExpensesService:
@@ -28,3 +28,20 @@ class ExpensesService:
         #
 
     #
+
+    def deleteExpense(self, id: str):
+        self._db.delete(id)
+
+    #
+
+    def updateExpenses(self, data: Dict[List]):
+        self._db.save(data)
+
+    #
+
+    def getAllExpensesByType(self):
+        # progress
+        self._db.getAll()
+
+
+#

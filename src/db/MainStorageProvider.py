@@ -62,7 +62,7 @@ class MainStorageProvider:
     #
 
     def getAll(self):
-        return json_util.dumps(self._collection.find({}))
+        return self._collection.find({})
 
     #
 
@@ -79,6 +79,11 @@ class MainStorageProvider:
 
     def deleteAll(self):
         self._collection.delete_many({})
+
+    #
+
+    def close(self):
+        self._client.close()
 
     #
 
