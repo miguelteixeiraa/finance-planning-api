@@ -2,10 +2,11 @@ class Type:
     def __init__(self, name, maxExpend, id):
         self._name = name
         self._maxExpend = maxExpend
+        self._validateType()
 
     #
 
-    def validateType(self) -> None:
+    def _validateType(self) -> None:
         if type(self._name) != str or not self._name.strip():
             raise Exception("")
 
