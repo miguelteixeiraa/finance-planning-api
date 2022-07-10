@@ -1,55 +1,69 @@
-from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from pymongo.errors import ConnectionFailure
+from pymongo import MongoClient
+
 import urllib.parse
-import db.config as config
-from bson import json_util
+import dbConfig
+
 from bson.objectid import ObjectId
+from bson import json_util
+
 from typing import Dict, List
 
 
 class MainStorageProvider:
     def __init__(self):
-        self._username = urllib.parse.quote_plus(config.USERNAME)
-        self._password = urllib.parse.quote_plus(config.PASSWORD)
+        self._username = urllib.parse.quote_plus(dbConfig.USERNAME)
+        self._password = urllib.parse.quote_plus(dbConfig.PASSWORD)
 
         self._client = self._connect()
-        self._db = self._client[config.DATABASE_NAME]
+        self._db = self._client[dbConfig.DATABASE_NAME]
 
-        if config.COLLECTION_NAME not in self._db.list_collection_names():
-            self._client.cluster0.create_collection(config.COLLECTION_NAME)
+        if dbConfig.COLLECTION_NAME not in self._db.list_collection_names():
+            self._client.cluster0.create_collection(dbConfig.COLLECTION_NAME)
         #
 
-        self._collection = self._db[config.COLLECTION_NAME]
+        self._collection = self._db[dbConfig.COLLECTION_NAME]
 
     #
 
     def _connect(self):
         try:
             client = MongoClient(
-                f"mongodb+srv://{self._username}:{self._password}@{config.DATABASE_NAME}.bauczka.mongodb.net/?retryWrites=true&w=majority",
+                f"mongodb+srv://{self._username}:{self._password}@{dbConfig.DATABASE_NAME}.bauczka.mongodb.net/?retryWrites=true&w=majority",
                 server_api=ServerApi("1"),
+                socketTimeoutMS=7000,
+                connectTimeoutMS=7000
             )
+
             client.admin.command("ismaster")
             return client
 
         except ConnectionFailure:
-            raise Exception("Server not available")
+            raise Exception("server not available")
         #
 
     #
 
     def save(self, data: Dict):
         if "_id" in data.keys() and data["_keys"]:
-            self._collection.update_one(data)
-            return
+            try:
+                self._collection.update_one(data)
+                return
+            except Exception as e:
+                raise Exception(
+                    f"error trying to update existing object in databse: {data}"
+                )
         #
 
-        self._collection.insert_one(data)
+        try:
+            self._collection.insert_one(data)
+        except Exception as e:
+            raise Exception(f"error trying to save new object in database: {data}")
 
     #
 
-    def saveAll(self, data: List[Dict]):
+    def saveAll(self, data: List[Dict]) -> None:
         for document in data:
             self.save(document)
         #
