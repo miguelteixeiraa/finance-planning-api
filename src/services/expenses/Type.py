@@ -1,7 +1,7 @@
 class Type:
-    def __init__(self, name, maxExpend, id):
+    def __init__(self, name, maxSpend, id):
         self._name = name
-        self._maxExpend = maxExpend
+        self._maxSpend = maxSpend
         self._validateType()
 
     #
@@ -10,7 +10,7 @@ class Type:
         if type(self._name) != str or not self._name.strip():
             raise Exception("")
 
-        if self._maxExpend < 0:
+        if self._maxSpend < 0:
             raise Exception()
         #
 
@@ -21,8 +21,10 @@ class Type:
 
     #
 
-    def getMaxExpend(self) -> float:
-        return self._maxExpend
+    def getMaxSpend(self) -> float:
+        return self._maxSpend
 
     #
+
+
 #
