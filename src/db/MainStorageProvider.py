@@ -3,7 +3,7 @@ from pymongo.errors import ConnectionFailure
 from pymongo import MongoClient
 
 import urllib.parse
-import dbConfig
+import config
 
 from bson.objectid import ObjectId
 from bson import json_util
@@ -13,27 +13,27 @@ from typing import Dict, List
 
 class MainStorageProvider:
     def __init__(self):
-        self._username = urllib.parse.quote_plus(dbConfig.USERNAME)
-        self._password = urllib.parse.quote_plus(dbConfig.PASSWORD)
+        self._username = urllib.parse.quote_plus(config.db.USERNAME)
+        self._password = urllib.parse.quote_plus(config.db.PASSWORD)
 
         self._client = self._connect()
-        self._db = self._client[dbConfig.DATABASE_NAME]
+        self._db = self._client[config.db.DATABASE_NAME]
 
-        if dbConfig.COLLECTION_NAME not in self._db.list_collection_names():
-            self._client.cluster0.create_collection(dbConfig.COLLECTION_NAME)
+        if config.db.COLLECTION_NAME not in self._db.list_collection_names():
+            self._client.cluster0.create_collection(config.db.COLLECTION_NAME)
         #
 
-        self._collection = self._db[dbConfig.COLLECTION_NAME]
+        self._collection = self._db[config.db.COLLECTION_NAME]
 
     #
 
     def _connect(self):
         try:
             client = MongoClient(
-                f"mongodb+srv://{self._username}:{self._password}@{dbConfig.DATABASE_NAME}.bauczka.mongodb.net/?retryWrites=true&w=majority",
+                f"mongodb+srv://{self._username}:{self._password}@{config.db.DATABASE_NAME}.bauczka.mongodb.net/?retryWrites=true&w=majority",
                 server_api=ServerApi("1"),
                 socketTimeoutMS=7000,
-                connectTimeoutMS=7000
+                connectTimeoutMS=7000,
             )
 
             client.admin.command("ismaster")

@@ -12,3 +12,6 @@ class Expense:
         if not self._cost:
             raise Exception("an expense should have a cost")
         #
+
+
+#

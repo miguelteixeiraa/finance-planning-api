@@ -1,13 +1,14 @@
 from MainStorageProvider import MainStorageProvider
 from typing import Dict
 from bson import ObjectId, json_util
-from Type import Type
+from base.Type import Type
+import config
 
 
 class TypeService:
-    def __init__(self) -> None:
-        self._typesCollectionId = "62cb5db0193a07c867079bac"
-        self._db = MainStorageProvider()
+    def __init__(self, db) -> None:
+        self._typesCollectionId = config.services.TYPE.DOCUMENT_ID
+        self._db = db
 
     #
 
